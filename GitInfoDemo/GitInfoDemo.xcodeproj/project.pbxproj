@@ -82,6 +82,7 @@
 				E806B819224D1EC700F95F7C /* Frameworks */,
 				E806B81A224D1EC700F95F7C /* Resources */,
 				E806B835224D1EF500F95F7C /* ShellScript */,
+				E806B837224D206F00F95F7C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -154,6 +155,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#详细的日志输出.免的老是要echo了\nset -x\n#最后一次提交的SHA\ngit_version=$(git log -1 --format=\"%h\")\n\n#当前的分支\ngit_branch=$(git symbolic-ref --short -q HEAD)\n\n#最后一次提交的作者\ngit_last_commit_user=$(git log -1 --pretty=format:'%an')\n\n#最后一次提交的时间\ngit_last_commit_date=$(git log -1 --format='%cd')\n\n#编译时间\nbuild_time=$(date)\n\ninfo_plist=\"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/Info.plist\"\n/usr/libexec/PlistBuddy -c \"Set :'CommitSHA'       '${git_version}'\"                \"${info_plist}\"\n/usr/libexec/PlistBuddy -c \"Set :'CommitBranch'    '${git_branch}'\"                 \"${info_plist}\"\n/usr/libexec/PlistBuddy -c \"Set :'CommitUser'      ${git_last_commit_user}\"       \"${info_plist}\"\n/usr/libexec/PlistBuddy -c \"Set :'CommitDate'      '${git_last_commit_date}'\"       \"${info_plist}\"\n/usr/libexec/PlistBuddy -c \"Set :'BuildTime'          '${build_time}'\"                 \"${info_plist}\"\n";
+		};
+		E806B837224D206F00F95F7C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ $CONFIGURATION == Release ]; then\necho \"Bumping build number...\"\nplist=${PROJECT_DIR}/${INFOPLIST_FILE}\n\n#自动增加\nbuildnum=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${plist}\")\nif [[ \"${buildnum}\" == \"\" ]]; then\necho \"No build number in $plist\"\nexit 2\nfi\n\nbuildnum=$(expr $buildnum + 1)\n/usr/libexec/Plistbuddy -c \"Set CFBundleVersion $buildnum\" \"${plist}\"\necho \"Bumped build number to $buildnum\"\n\nelse\necho $CONFIGURATION \" build - Not bumping build number.\"\n\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
