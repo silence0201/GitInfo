@@ -2,7 +2,7 @@
 GitInfo For iOS Dev
 
 
-获取git的相关信息
+### 获取git的相关信息
 
 Shell
 
@@ -40,4 +40,29 @@ NSString *commitBranch = [NSString stringWithFormat:@"当前所在分支：%@", 
 NSString *commitUser = [NSString stringWithFormat:@"最后提交用户：%@", [infoDic objectForKey:CommitUser]];
 NSString *commitDate = [NSString stringWithFormat:@"最后提交时间：%@", [infoDic objectForKey:CommitDate]];
 NSString *buildTime = [NSString stringWithFormat:@"本次编译时间：%@", [infoDic objectForKey:BuildTime]];
+```
+
+
+### 自动添加build版本:
+
+```
+if [ $CONFIGURATION == Release ]; then
+echo "Bumping build number..."
+plist=${PROJECT_DIR}/${INFOPLIST_FILE}
+
+#自动增加
+buildnum=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" "${plist}")
+if [[ "${buildnum}" == "" ]]; then
+echo "No build number in $plist"
+exit 2
+fi
+
+buildnum=$(expr $buildnum + 1)
+/usr/libexec/Plistbuddy -c "Set CFBundleVersion $buildnum" "${plist}"
+echo "Bumped build number to $buildnum"
+
+else
+echo $CONFIGURATION " build - Not bumping build number."
+
+fi
 ```
